@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/mikeyqq/tinyapp/issues"
   },
-  "homepage": "https://github.com/mikeyqq/tinyapp#readme"
+  "homepage": "https://github.com/mikeyqq/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
