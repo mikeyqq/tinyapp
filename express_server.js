@@ -26,7 +26,9 @@ app.get("/hello", (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { 
+    username: req.cookies["username"],
+    urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
@@ -52,6 +54,12 @@ app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+app.post("/login", (req, res) => {
+  res.cookie('username', req.body.username);
+  console.log(req.body.username);
+  res.redirect('/urls/')
+  });
+
 //This will redirect back to the same page and also delete the shortURL requested
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL]
@@ -63,6 +71,8 @@ app.post("/urls/:shortURL", (req, res) => {
 urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect("/urls");
 });
+
+
 
 app.post("/urls", (req, res) => {
   let newsmallLink = generateRandomString();
