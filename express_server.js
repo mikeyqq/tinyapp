@@ -51,14 +51,18 @@ app.get('/hello', (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL]
+  res.redirect("/urls/");
+});
+
+app.post("/urls/:shortURL", (req, res) => {
+urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect("/urls");
-})
+});
 
 app.post("/urls", (req, res) => {
   let newsmallLink = generateRandomString();
-  urlDatabase[newsmallLink] = req.body['longURL'];  // Log the POST request body to the console  
+  urlDatabase[newsmallLink] = req.body.longURL;  // Log the POST request body to the console  
   res.redirect(`/urls/${newsmallLink}`)
-  console.log(urlDatabase);
 });
 
 
