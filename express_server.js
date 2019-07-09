@@ -49,12 +49,25 @@ app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL]
+  res.redirect("/urls");
+})
+
 app.post("/urls", (req, res) => {
   let newsmallLink = generateRandomString();
   urlDatabase[newsmallLink] = req.body['longURL'];  // Log the POST request body to the console  
   res.redirect(`/urls/${newsmallLink}`)
   console.log(urlDatabase);
 });
+
+
+
+
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
