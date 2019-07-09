@@ -1,4 +1,6 @@
 const express = require("express");
+const cookieParser = require('cookie-parser');
+
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -6,6 +8,7 @@ app.set("view engine", "ejs");
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -49,11 +52,13 @@ app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+//This will redirect back to the same page and also delete the shortURL requested
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL]
   res.redirect("/urls/");
 });
 
+//This will redirect back to My Urls page with new short URL and longURL
 app.post("/urls/:shortURL", (req, res) => {
 urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect("/urls");
@@ -64,9 +69,6 @@ app.post("/urls", (req, res) => {
   urlDatabase[newsmallLink] = req.body.longURL;  // Log the POST request body to the console  
   res.redirect(`/urls/${newsmallLink}`)
 });
-
-
-
 
 
 
