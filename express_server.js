@@ -33,7 +33,7 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  res.render("urls_new");
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -57,7 +57,12 @@ app.get('/hello', (req, res) => {
 app.post("/login", (req, res) => {
   res.cookie('username', req.body.username);
   console.log(req.body.username);
-  res.redirect('/urls/')
+  res.redirect('/urls/');
+  });
+
+  app.post("/logout", (req, res) => {
+res.clearCookie("username");
+res.redirect('/urls/');
   });
 
 //This will redirect back to the same page and also delete the shortURL requested

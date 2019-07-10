@@ -10,10 +10,21 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <form class="form-inline" action="/urls/login" method="POST" style="postion: absolute; right: 0">
+
+
+    <% if (username !== undefined) {%>
+    <form class="form-inline" action="/logout" method="POST" style="postion: absolute; right: 0">
+ Welcome <%=username %>
+        <input type="submit" class="btn btn-outline-dark" value="Logout"></input>
+      </div>
+    </form>
+    <%} else {%> 
+      <form class="form-inline" action="/login" method="POST" style="postion: absolute; right: 0">
         <input class="form-control" type="text" name="username" placeholder="Username" style="width: 200px; margin margin: 1em">   
         <input type="submit" class="btn btn-outline-dark" value="Login"></input>
       </div>
     </form>
+    <%}%>
+
   </nav>
 </header>
