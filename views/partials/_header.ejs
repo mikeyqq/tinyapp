@@ -11,20 +11,19 @@
       </div>
     </div>
 
-
-    <% if (username !== undefined) {%>
-    <form action="/logout" method="POST">
-      Logged In As: <%=username %>!
-        <input type="submit" class="btn btn-outline-dark" value="Logout" style="margin-left: 10px"></input>
-      </div>
-    </form>
-    <%} else {%> 
-      <form class="form-inline" action="/login" method="POST" style="postion: absolute; right: 0">
-        <input class="form-control" type="text" name="username" placeholder="Username">   
-        <input type="submit" class="btn btn-outline-dark" value="Login" style="margin-left: 10px"></input>
-      </div>
-    </form>
-    <%}%>
-
+<div class="navbar-nav">
+    <% if (users) {%>
+    <form class="form-inline" action="/logout" method="POST">
+      <div class="form-group mb-2">
+     <Label style="padding: 0 30px">Logged In As: <%=users.email%>!</Label>
+    <button type="submit" class="btn btn-outline-dark" >Logout</button>
+  </div>
+</form>
+    <% } else { %> 
+<a class="nav-item nav-link" href="/login">Login</a>
+<a class="nav-item nav-link" href="/register">Register</a>
+    <% } %>
+   
+</div>
   </nav>
 </header>
