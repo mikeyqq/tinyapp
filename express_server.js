@@ -33,16 +33,17 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  res.render("urls_new", templateVars);
+  res.render("urls_new", {username: req.cookies["username"]});
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
+  let templateVars = {username: req.cookies.username, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
+
   res.redirect(longURL);
 });
 
@@ -76,8 +77,6 @@ app.post("/urls/:shortURL", (req, res) => {
 urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect("/urls");
 });
-
-
 
 app.post("/urls", (req, res) => {
   let newsmallLink = generateRandomString();
