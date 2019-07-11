@@ -179,7 +179,7 @@ app.get('/hello', (req, res) => {
 //This will redirect back to the same page and also delete the shortURL requested
 app.post("/urls/:shortURL/delete", (req, res) => {
   if(urlsForUser(req.cookies.users_id)[req.params.shortURL]) {
-    delete urlDatabase[req.params.shortURL].longURL
+    delete urlDatabase[req.params.shortURL]
     res.redirect("/urls/");
   } else {
     res.redirect("/urls/");
