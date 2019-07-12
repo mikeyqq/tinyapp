@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 const { getUserByEmail, generateRandomString } = require('./helper.js');
 
 app.set("view engine", "ejs");
@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
   keys: ['tester'],
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  maxAge: 24 * 60 * 60 * 1000
 }));
 
 //*-----------------------------------------------------------------------------------USERS DATABASE-----------------------------------------------------------------------------*//
@@ -184,7 +184,6 @@ const emailInDb = (email) => {
 
 const validateUser = (email, password) => {
   for (const record in users) {
-    //console.log(record);
     if (email === users[record].email && bcrypt.compareSync(password, users[record].password)) {
       return true;
     }
