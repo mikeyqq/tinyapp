@@ -17,6 +17,8 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
+//*-----------------------------------------------------------------------------------USERS DATABASE-----------------------------------------------------------------------------*//
+
 const urlDatabase = {
   "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: "userRandomID"},
   "9sm5xK": {longURL: "http://www.google.com", userID: "user2RandomID"}
@@ -35,7 +37,8 @@ const users = {
   }
 }
 
-//When going to ROOT PAGE, it will redirect based on logged in status.
+//*------------------------------------------------------------------------------------ GET / POST -----------------------------------------------------------------------------*//
+
 app.get("/", (req, res) => {
   if(req.session.users_id) {
     res.redirect('/urls');
@@ -71,8 +74,7 @@ app.get('/urls/new', (req, res) => {
     }
 });
 
-  
-  //GET REGISTERRRR!!!!
+
 app.get('/register', (req, res) => {
   if(req.session.users_id) {
     res.redirect('/urls');
@@ -81,23 +83,20 @@ app.get('/register', (req, res) => {
   };
 });
   
-  //checks to see if email in database for success/error
 app.post('/register', (req, res) => {
     if(!req.body.email || !req.body.password) {
       res.redirect(400, '/register')
   } else if(emailInDB(req.body.email, )) {
     res.redirect(400, '/register')
 } else {
-    //console.log("hello");
     let randomId = generateRandomString();
     let newUser = {
       id: randomId,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 10)
   }
-    //console.log(newUser.password);
     users[randomId] = newUser;
-    req.session.users_id = newUser.id;        //IS THIS CORRECT?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    req.session.users_id = newUser.id;     
   res.redirect("/urls") 
   }
 });
@@ -108,7 +107,6 @@ app.get('/login' , (req, res) => {
   } else {
     res.redirect("/urls");
   }
- // res.render("urls_login", {users: users[req.session.users_id]});
 });
 
 app.post("/login", (req, res) => {
@@ -117,7 +115,7 @@ app.post("/login", (req, res) => {
   if (!validateUser(email, password)) {
     res.redirect(400, '/login');
   } else {
-    req.session.users_id = getUserByEmail(email, users).id;       //IS THIS CORRECT?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    req.session.users_id = getUserByEmail(email, users).id; 
     res.redirect('/urls');
   }
   });
@@ -152,9 +150,6 @@ app.post("/logout", (req, res) => {
     res.redirect('/login');
 });
 
-
-
-  //This will redirect back to My Urls page with new short URL and longURL
 app.put("/urls/:shortURL", (req, res) => {
     if(urlsForUser(req.session.users_id)[req.params.shortURL]) {
       urlDatabase[req.params.shortURL].longURL = req.body.longURL;
@@ -164,8 +159,7 @@ app.put("/urls/:shortURL", (req, res) => {
     }
 });
 
-  
-//This will redirect back to the same page and also delete the shortURL requested
+
 app.delete("/urls/:shortURL", (req, res) => {
   if(urlsForUser(req.session.users_id)[req.params.shortURL]) {
     delete urlDatabase[req.params.shortURL]
@@ -175,8 +169,9 @@ app.delete("/urls/:shortURL", (req, res) => {
   }
 });
 
+//*-------------------------------------------------------------------------------- HELPER FUNCTIONS --------------------------------------------------------------------------------*//
 
-//This will generate for both shortURL and users_id
+
 const generateRandomString = () => {
   let result  = '';
   let characters  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
