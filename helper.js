@@ -1,15 +1,16 @@
-const emailInDB = (email) => {
-  for(const record in users) {
-    if(users[record].email === email) {
-      return true;
-    }
+const generateRandomString = () => {
+  let result  = '';
+  let characters  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for ( var i = 0; i < 6; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
-  return false;
-};
+  return result;
+}
+
 
 const getUserByEmail = (email, database) => {
   for(const record in database) {
-    if(email === database[record].email) {
+    if(database[record].email === email) {
       return database[record];
     }
   }
@@ -18,5 +19,4 @@ const getUserByEmail = (email, database) => {
 
 
 
-module.exports = {emailInDB, getUserByEmail};
-;
+module.exports = { getUserByEmail, generateRandomString };
