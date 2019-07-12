@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
   keys: ['tester'],
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
 const urlDatabase = {
@@ -32,7 +33,7 @@ const users = {
   }
 }
 
-//ROOT PAGE which only shows white screen and Hello text.
+//When going to ROOT PAGE, it will redirect based on logged in status.
 app.get("/", (req, res) => {
   if(req.session.users_id) {
     res.redirect('/urls');
@@ -50,6 +51,9 @@ app.get('/urls', (req, res) => {
   });
   
   app.post("/urls", (req, res) => {
+    if(!req.session.users_id) {
+      res.redirect(400, '/login')
+    }
     username = req.session.users_id
     let newsmallLink = generateRandomString();
     urlDatabase[newsmallLink] = {longURL: req.body.longURL, userID: username};
@@ -115,7 +119,7 @@ app.get("/urls/:shortURL", (req, res) => {
       let templateVars = {users: users[req.session.users_id], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL};
       res.render("urls_show", templateVars);
     } else {
-      res.redirect('/urls');
+      res.redirect(400, '/register');
     }
   });
   
@@ -134,7 +138,7 @@ app.get('/hello', (req, res) => {
 
 app.post("/logout", (req, res) => {
     req.session = null;
-    res.redirect('/urls');
+    res.redirect('/login');
 });
 
 
