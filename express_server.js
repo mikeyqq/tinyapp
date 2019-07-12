@@ -2,10 +2,12 @@ const express = require("express");
 const bcrypt = require('bcrypt');
 const helper = require('./helper');
 const cookieSession = require('cookie-session')
+const methodOverride = require('method-override');
 const app = express();
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
+app.use(methodOverride('_method'));
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -82,11 +84,9 @@ app.get('/register', (req, res) => {
   //checks to see if email in database for success/error
 app.post('/register', (req, res) => {
     if(!req.body.email || !req.body.password) {
-      res.statusCode = 403;
-      res.sendStatus(403);
+      res.redirect(400, '/register')
   } else if(emailInDB(req.body.email, )) {
-    res.statusCode = 403;
-    res.sendStatus(403);
+    res.redirect(400, '/register')
 } else {
     //console.log("hello");
     let randomId = generateRandomString();
@@ -103,7 +103,12 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/login' , (req, res) => {
-  res.render("urls_login", {users: users[req.session.users_id]});
+  if(!req.session.users_id) {
+    res.render("urls_login", {users: users[req.session.users_id]});
+  } else {
+    res.redirect("/urls");
+  }
+ // res.render("urls_login", {users: users[req.session.users_id]});
 });
 
 app.post("/login", (req, res) => {
@@ -150,7 +155,7 @@ app.post("/logout", (req, res) => {
 
 
   //This will redirect back to My Urls page with new short URL and longURL
-app.post("/urls/:shortURL", (req, res) => {
+app.put("/urls/:shortURL", (req, res) => {
     if(urlsForUser(req.session.users_id)[req.params.shortURL]) {
       urlDatabase[req.params.shortURL].longURL = req.body.longURL;
       res.redirect('/urls');
@@ -161,7 +166,7 @@ app.post("/urls/:shortURL", (req, res) => {
 
   
 //This will redirect back to the same page and also delete the shortURL requested
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL", (req, res) => {
   if(urlsForUser(req.session.users_id)[req.params.shortURL]) {
     delete urlDatabase[req.params.shortURL]
     res.redirect("/urls/");
