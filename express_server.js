@@ -5,6 +5,7 @@ const cookieSession = require('cookie-session')
 const methodOverride = require('method-override');
 const app = express();
 const PORT = 8080; // default port 8080
+const { getUserByEmail, generateRandomString } = require('./helper.js');
 
 app.set("view engine", "ejs");
 app.use(methodOverride('_method'));
@@ -172,15 +173,6 @@ app.delete("/urls/:shortURL", (req, res) => {
 //*-------------------------------------------------------------------------------- HELPER FUNCTIONS --------------------------------------------------------------------------------*//
 
 
-const generateRandomString = () => {
-  let result  = '';
-  let characters  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for ( var i = 0; i < 6; i++ ) {
-     result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
-}
-
 const emailInDB = (email) => {
   for(const record in users) {
     if(users[record].email === email) {
@@ -189,15 +181,6 @@ const emailInDB = (email) => {
   }
   return false;
 };
-
-const getUserByEmail = (email, database) => {
-  for(const record in database) {
-    if(database[record].email === email) {
-      return database[record];
-    }
-  }
-  return undefined;
-}
 
 
 const validateUser = (email, password) => {
