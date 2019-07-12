@@ -72,7 +72,11 @@ app.get('/urls/new', (req, res) => {
   
   //GET REGISTERRRR!!!!
 app.get('/register', (req, res) => {
-    res.render("urls_registration", users);
+  if(req.session.users_id) {
+    res.redirect('/urls');
+  } else {
+    res.render("urls_registration", {users: users[req.session.users_id]})
+  };
 });
   
   //checks to see if email in database for success/error
@@ -106,8 +110,7 @@ app.post("/login", (req, res) => {
   let email = req.body.email
   let password = req.body.password
   if (!validateUser(email, password)) {
-    res.statusCode = 403;
-    res.sendStatus(403);
+    res.redirect(400, '/login');
   } else {
     req.session.users_id = getUserByEmail(email, users).id;       //IS THIS CORRECT?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     res.redirect('/urls');
@@ -119,13 +122,16 @@ app.get("/urls/:shortURL", (req, res) => {
       let templateVars = {users: users[req.session.users_id], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL};
       res.render("urls_show", templateVars);
     } else {
-      res.redirect(400, '/register');
+      res.redirect(400, '/login');
     }
   });
   
 app.get("/u/:shortURL", (req, res) => {
-    const longURL = urlDatabase[req.params.shortURL].longURL;
-    res.redirect(longURL);
+    if(urlDatabase[req.params.shortURL]) {
+      res.redirect(urlDatabase[req.params.shortURL].longURL);
+    } else {
+    res.redirect(400, '/login');
+    }
 });
 
 app.get("/urls.json", (req, res) => {
