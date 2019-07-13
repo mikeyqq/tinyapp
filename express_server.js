@@ -39,6 +39,7 @@ const users = {
 
 //*------------------------------------------------------------------------------------ GET / POST -----------------------------------------------------------------------------*//
 
+//This is the root page which will redirect user to main page that shows your tinyurls or creates new tinyurls based on cookie session of the users id.
 app.get("/", (req, res) => {
   if (req.session.users_id) {
     res.redirect('/urls');
@@ -47,14 +48,15 @@ app.get("/", (req, res) => {
   }
 });
 
-
+//Main page that has your exisiting tinyurls and other options.
 app.get('/urls', (req, res) => {
   let templateVars = {
     users: users[req.session["users_id"]],
     urls: urlsForUser(req.session.users_id), users: users[req.session.users_id]};
   res.render("urls_index", templateVars);
 });
-  
+
+//Main page that will verify if you are logged in based on cookie session. This post will allow you to go to any short links you have created.
 app.post("/urls", (req, res) => {
   if (!req.session.users_id) {
     res.redirect(400, '/login');
@@ -65,7 +67,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newsmallLink}`);
 });
 
-
+//Create new TinyUrl page.
 app.get('/urls/new', (req, res) => {
   if (req.session.users_id) {
     res.render("urls_new", {users: users[req.session.users_id]});
@@ -74,7 +76,7 @@ app.get('/urls/new', (req, res) => {
   }
 });
 
-
+//Register page, Will verify cookie session, and if valid it will redirect to /urls main page, otherwise it will render the registraion page.
 app.get('/register', (req, res) => {
   if (req.session.users_id) {
     res.redirect('/urls');
@@ -83,6 +85,7 @@ app.get('/register', (req, res) => {
   }
 });
   
+//On register page, checks input fields, and then checks if emails in database in order for you to register an account.
 app.post('/register', (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.redirect(400, '/register');
@@ -109,6 +112,7 @@ app.get('/login' , (req, res) => {
   }
 });
 
+//The helper function validateUser will return true or false base on if the input email/password exists.
 app.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
@@ -120,6 +124,7 @@ app.post("/login", (req, res) => {
   }
 });
   
+//Short URL page which will load up after creating a new Tiny Url. Page will display original url, the short url, and edit. 
 app.get("/urls/:shortURL", (req, res) => {
   if (urlsForUser(req.session.users_id)[req.params.shortURL]) {
     let templateVars = {users: users[req.session.users_id], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL};
@@ -128,7 +133,8 @@ app.get("/urls/:shortURL", (req, res) => {
     res.redirect(400, '/login');
   }
 });
-  
+
+//This will redirect your shortURL directly to the long urls main page if the shortURL is valid and exist in the urlDatabase.
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
     res.redirect(urlDatabase[req.params.shortURL].longURL);
@@ -171,7 +177,7 @@ app.delete("/urls/:shortURL", (req, res) => {
 
 //*-------------------------------------------------------------------------------- HELPER FUNCTIONS --------------------------------------------------------------------------------*//
 
-
+//This helper function checks if email is in our existing database and returns true or false.
 const emailInDb = (email) => {
   for (const record in users) {
     if (users[record].email === email) {
@@ -181,7 +187,7 @@ const emailInDb = (email) => {
   return false;
 };
 
-
+//This helper function checks if the users email and hashed password matches what we have in our users database and returns true or false.
 const validateUser = (email, password) => {
   for (const record in users) {
     if (email === users[record].email && bcrypt.compareSync(password, users[record].password)) {
@@ -190,6 +196,7 @@ const validateUser = (email, password) => {
   }
   return false;
 };
+
 
 const urlsForUser = (id) => {
   let newObj = {};
